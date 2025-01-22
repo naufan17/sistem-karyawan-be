@@ -5,18 +5,49 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Employee\EmployeeController;
 use App\Http\Controllers\Auth\AuthController;
 
-Route::group(['middleware' => ['auth:sanctum'], 'prefix' => 'v1'], function () {
-    Route::get('/user', function (Request $request) {
-        return $request->user();
+// Authentication Routes
+Route::group(['prefix' => 'v1/auth'], function () {
+    Route::post('/register', [AuthController::class, 'register'])
+        ->name('register');
+
+    Route::post('/login', [AuthController::class, 'login'])
+        ->name('login');
+
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::delete('/logout', [AuthController::class, 'logout'])
+            ->name('logout');        
     });
 });
 
-Route::group(['prefix' => 'v1'], function () {
-    Route::post('/auth/register', [AuthController::class, 'register'])
-        ->name('register');
+// Employee Routes
+Route::group(['prefix' => 'v1/employes'], function () {
+    Route::get('/', [EmployeeController::class, 'index'])
+        ->name('employes.index');
 
-    Route::post('/auth/login', [AuthController::class, 'login'])
-        ->name('login');
+    Route::get('/{id}', [EmployeeController::class, 'show'])
+        ->name('employes.show');
 
-    Route::apiResource('/employes', EmployeeController::class);
+    Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/user', function (Request $request) {
+            return $request->user();
+        });
+        
+        Route::post('/', [EmployeeController::class, 'store'])
+            ->name('employes.store');
+    
+        Route::put('/{id}', [EmployeeController::class, 'update'])
+            ->name('employes.update');
+    
+        Route::delete('/{id}', [EmployeeController::class, 'destroy'])
+            ->name('employes.destroy');            
+    });
+
+    // Route::apiResource('/', EmployeeController::class);
+});
+
+// User Routes
+Route::group(['prefix' => 'v1', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/user', function (Request $request) {
+        return $request->user();
+    });        
 });

@@ -34,7 +34,7 @@ Route::prefix('api/v1/auth')->group(function () {
         ->middleware(['auth', 'throttle:6,1'])
         ->name('verification.send');
 
-    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
-        ->middleware('auth')
-        ->name('logout');
+    // Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
+    //     ->middleware('auth')
+    //     ->name('logout');
 });

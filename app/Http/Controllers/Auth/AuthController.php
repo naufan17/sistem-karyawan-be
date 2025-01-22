@@ -62,7 +62,7 @@ class AuthController extends Controller
 
             $token = $user->createToken('auth_token')->plainTextToken;
 
-            return new ApiOkResponse('Token created successfully', [
+            return new ApiOkResponse('User logged in successfully', [
                 'access_token' => $token,
                 'token_type' => 'Bearer',                
             ]);
@@ -76,7 +76,7 @@ class AuthController extends Controller
     {
         try {
             $request->user()->currentAccessToken()->delete();
-            return new ApiOkResponse('Data deleted successfully');
+            return new ApiOkResponse('User logged out successfully');
         } catch (\Throwable $th) {
             error_log($th->getMessage());
             return new ApiInternalServerErrorResponse();
