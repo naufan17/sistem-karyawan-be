@@ -8,15 +8,14 @@ use Illuminate\Http\Response;
 class ApiNotFoundResponse implements Responsable
 {
   public function __construct(
-    private bool $success,
     private string $message,
   ) {}
 
   public function toResponse($request)
   {
     return response()->json([
-      'success' => $this->success,
+      'success' => false,
       'message' => $this->message,
-    ]);
+    ], Response::HTTP_NOT_FOUND);
   }
 }

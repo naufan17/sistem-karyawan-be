@@ -7,9 +7,11 @@ use App\Http\Repository\Employee\EmployeeRepository;
 use App\Http\Responses\ApiNotFoundResponse;
 use App\Http\Responses\ApiOkResponse;
 use App\Http\Responses\ApiInternalServerErrorResponse;
+use App\Http\Responses\ApiCreatedResponse;
+use App\Http\Responses\ApiBadRequestResponse;
 use App\Models\Employee;
 use App\Services\Employee\EmployeeService;
-
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 
 class EmployeeController extends Controller
@@ -47,12 +49,12 @@ class EmployeeController extends Controller
                 ];
             });
             
-            if (is_null($employees)) return new ApiNotFoundResponse(false, 'Data not found');
+            if (is_null($employees)) return new ApiNotFoundResponse( 'Data not found');
 
-            return new ApiOkResponse(true, 'Data retrieved successfully', $employees);
+            return new ApiOkResponse( 'Data retrieved successfully', $employees);
         } catch (\Throwable $th) {
             error_log($th->getMessage());
-            return new ApiInternalServerErrorResponse(false);
+            return new ApiInternalServerErrorResponse();
         }
     }
 
@@ -65,7 +67,7 @@ class EmployeeController extends Controller
                 ->selectRaw('IF(termination_date IS NULL, "active", "inactive") as status')
                 ->first();
 
-            if (is_null($employee)) return new ApiNotFoundResponse(false, 'Employee not found');
+            if (is_null($employee)) return new ApiNotFoundResponse( 'Employee not found');
 
             $formattedEmployee = [
                 'id' => $employee->id,
@@ -84,10 +86,90 @@ class EmployeeController extends Controller
                 'status' => $employee->status,
             ];
 
-            return new ApiOkResponse(true, 'Data retrieved successfully', $formattedEmployee);
+            return new ApiOkResponse('Data retrieved successfully', $formattedEmployee);
         } catch (\Throwable $th) {
             error_log($th->getMessage());
-            return new ApiInternalServerErrorResponse(false);
+            return new ApiInternalServerErrorResponse();
+        }
+    }
+
+    public function store(Request $request)
+    {
+        $validatedData = Validator::make($request->all(),[
+            'first_name' => 'required|string|max:100',
+            'last_name' => 'required|string|max:100',
+            'date_of_birth' => 'required|string',
+            'gender' => 'required|string|max:10',
+            'email' => 'required|email',
+            'address' => 'required|string|max:255',
+            'hire_date' => 'required|string',
+            'division_id' => 'required|exists:divisions,id',
+            'job_id' => 'required|exists:employes_jobs,id',
+        ]);
+
+        if($validatedData->fails()) {
+            return new ApiBadRequestResponse($validatedData->errors());
+        }
+
+        try {
+            Employee::create($request->all());
+
+            return new ApiCreatedResponse('Data created successfully');
+        } catch (\Throwable $th) {
+            error_log($th->getMessage());
+            return new ApiInternalServerErrorResponse();
+        }
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $validatedData = Validator::make($request->all(),[
+                'first_name' => 'required|string|max:100',
+                'last_name' => 'required|string|max:100',
+                'date_of_birth' => 'required|string',
+                'gender' => 'required|string|max:10',
+                'email' => 'required|email',
+                'address' => 'required|string|max:255',
+                'hire_date' => 'required|string',
+                'division_id' => 'required|exists:divisions,id',
+                'job_id' => 'required|exists:employes_jobs,id',
+            ]);
+
+            if($validatedData->fails()) {
+                return new ApiBadRequestResponse($validatedData->errors());
+            }
+
+            $employee = Employee::find($id);
+            
+            if (is_null($employee)) {
+                return new ApiNotFoundResponse('Employee not found');
+            }
+            
+            $employee->update($request->all());
+
+            return new ApiOkResponse('Data updated successfully');
+        } catch (\Throwable $th) {
+            error_log($th->getMessage());
+            return new ApiInternalServerErrorResponse();
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $employee = Employee::find($id);
+
+            if (is_null($employee)) {
+                return new ApiNotFoundResponse('Employee not found');
+            }
+
+            $employee->delete();
+
+            return new ApiOkResponse('Data deleted successfully');
+        } catch (\Throwable $th) {
+            error_log($th->getMessage());
+            return new ApiInternalServerErrorResponse();
         }
     }
 }
