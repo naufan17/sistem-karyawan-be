@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Employee extends Model
 {
-    protected $table = 'employees';
+    use HasFactory;
+    
+    protected $table = 'employes';
 
     protected $fillable = [
         'first_name', 
@@ -20,4 +23,14 @@ class Employee extends Model
         'division_id', 
         'job_id'
     ];
+
+    public function division()
+    {
+        return $this->hasOne(Division::class);
+    }
+
+    public function job()
+    {
+        return $this->hasOne(EmployeeJob::class);
+    }
 }

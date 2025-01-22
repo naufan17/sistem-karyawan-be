@@ -15,37 +15,37 @@ class DivisionSeeder extends Seeder
     {
         DB::table('divisions')->insert([
             [
-                'division_id' => 1,
+                'id' => 1,
                 'division_name' => 'IT',
                 'created_at' => now(),
                 'updated_at' => now()
             ], 
             [
-                'division_id' => 2,
+                'id' => 2,
                 'division_name' => 'HR',
                 'created_at' => now(),
                 'updated_at' => now()
             ], 
             [
-                'division_id' => 3,
+                'id' => 3,
                 'division_name' => 'Sales',
                 'created_at' => now(),
                 'updated_at' => now()
             ], 
             [
-                'division_id' => 4,
+                'id' => 4,
                 'division_name' => 'Marketing',
                 'created_at' => now(),
                 'updated_at' => now()
             ], 
             [
-                'division_id' => 5,
+                'id' => 5,
                 'division_name' => 'Finance',
                 'created_at' => now(),
                 'updated_at' => now()
             ], 
             [
-                'division_id' => 6,
+                'id' => 6,
                 'division_name' => 'Operations',
                 'created_at' => now(),
                 'updated_at' => now()
