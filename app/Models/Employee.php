@@ -8,8 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class Employee extends Model
 {
     use HasFactory;
-    
+
     protected $table = 'employes';
+
+    protected $primaryKey = 'id';
 
     protected $fillable = [
         'first_name', 
@@ -26,11 +28,11 @@ class Employee extends Model
 
     public function division()
     {
-        return $this->hasOne(Division::class);
+        return $this->belongsTo(Division::class);
     }
 
     public function job()
     {
-        return $this->hasOne(EmployeeJob::class);
+        return $this->belongsTo(EmployeeJob::class);
     }
 }

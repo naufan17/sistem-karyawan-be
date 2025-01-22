@@ -11,6 +11,8 @@ class Division extends Model
 
     protected $table = 'divisions';
 
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'divison_name',
     ];

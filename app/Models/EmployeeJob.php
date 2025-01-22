@@ -11,6 +11,8 @@ class EmployeeJob extends Model
 
     protected $table = 'employes_jobs';
 
+    protected $primaryKey = 'id';
+
     protected $fillable = [
         'job_title',
         'job_description',
